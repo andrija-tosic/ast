@@ -7,12 +7,12 @@ import SymbolTable.*;
 parser code {:
     SymbolTable symbolTable;
     Hashtable<String, Set<String>> userTypes;
-:}
+:};
 
 init with {:
     symbolTable = new SymbolTable();
     userTypes = new HashSet<>();
-:}
+:};
 
 terminal CLASS, SEMICOLON, ASSIGN, OPENBRACKET, CLOSEDBRACKET;
 terminal String ID;

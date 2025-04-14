@@ -1,0 +1,84 @@
+import java_cup.runtime.*;
+import java.util.*;
+import SymbolTable;
+
+parser code {:
+    SymbolTable symbolTable;
+:};
+
+init with {:
+    symbolTable = new SymbolTable();
+:};
+
+non terminal Element Element;
+non terminal Object Content;
+non terminal ArrayList ElementList;
+
+terminal String STARTTAG;
+terminal String ENDTAG;
+terminal String TEXT;
+
+Element ::= STARTTAG:start Content:content ENDTAG:end
+{:
+    if (!start.equals(end)) {
+        // error
+    }
+
+    if (start.equals("table") && !(content instanceof(ArrayList))) {
+        // sadrzaj table mora biti niz tr
+    }
+
+    if (start.equals("table")) {
+        for (Element e : content) {
+            if (!e.tag.equals("tr")) {
+                // error
+            }
+        }
+
+        Element firstEl = content[0];
+
+
+        if (firstEl.tag.equals("tr")) {
+            for (int i=1; ifirstEl.content.size(); i++) {
+                if (!firstEl.content[i].tag.equals("th")) {
+                    // Elementi th se mogu naći samo u prvoj vrsti ili prvoj koloni tabele
+                }
+            }
+        }
+    }
+
+    if (start.equals("tr")) {
+        for (Element e : content) {
+            if (!e.tag.equals("td") && !e.tag.equals("th")) {
+                // Element tr može sadržati isključivo elemente td i th;
+            }
+        }
+    }
+
+    if ((start.equals("td") || start.equals("th")) && !(content instanceof(String))) {
+        // Sadržaj elemenata td i th može biti isključivo TEXT;
+    }
+
+    RESULT = new Element(start, content);
+:}
+
+Content ::= TEXT:t
+{:
+    RESULT = t;
+:}
+| ElementList:l
+{:
+    RESULT = l;
+:}
+
+ElementList ::= Element:e
+{:
+    RESULT = new ArrayList();
+    RESULT.add(e);
+:}
+| ElementList:l Element:e
+{:
+    l.add(e);
+    RESULT = l;
+:}
+
